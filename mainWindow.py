@@ -166,7 +166,6 @@ class MainWindow(QWidget):
         # set initial ratio of the two sides of the window
         self.mainBodySplitter.setSizes([100, 200])
 
-
     def updateLevelOverview(self, LEVEL, clear=True):
         # amount of times each skill is taught
         self.saveDay(self.dayNumInt, False)
