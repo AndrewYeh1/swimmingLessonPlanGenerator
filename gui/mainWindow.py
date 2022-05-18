@@ -1,7 +1,8 @@
 # import constant
+from internalData import constant, presets
 
 # import data
-from internalData import data, constant
+from internalData import data
 
 # PyQt6 gui imports
 from PyQt6.QtCore import Qt
@@ -153,8 +154,9 @@ class MainWindow(QWidget):
         self.lessonPlanControlsHBox.addWidget(self.nextBtn)
         self.lessonPlanVBoxContainer.addLayout(self.lessonPlanControlsHBox)
 
-        # populates the level overview
-        self.updateLevelOverview("Swim kids 1")
+        # populates the level overview with the default level
+        self.levelSelect.setCurrentText(presets.defaultLevel)
+        self.updateLevelOverview(presets.defaultLevel)
 
         # set initial ratio of the two sides of the window
         self.mainBodySplitter.setSizes([100, 200])
