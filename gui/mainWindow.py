@@ -1,33 +1,25 @@
 # import constant
-import constant
 
 # import data
-import data
+from internalData import data, constant
 
 # PyQt6 gui imports
-from PyQt6 import QtGui
-from PyQt6.QtCore import Qt, QThread, QModelIndex
+from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (QWidget,  # window
                              QPushButton, QLabel,  # buttons and labels
-                             QLineEdit, QPlainTextEdit,  # inputs
-                             QTabWidget,  # tabs
+                             QLineEdit,  # inputs
                              QScrollArea,  # scroll
-                             QFrame,  # frame
-                             QInputDialog,  # dialog box
                              QComboBox,  # drop down menu
                              QTreeWidget, QTreeWidgetItem,  # treeview
-                             QCheckBox,  # checkbox
                              QSplitter,  # advanced layout management
                              QMenu, QMenuBar,  # top bar
-                             QVBoxLayout, QHBoxLayout, QGridLayout,)  # layout management
+                             QVBoxLayout, QHBoxLayout, )  # layout management
 
 # widgets
-import activityEditGUI
-import activityViewGUI
-import activityPanelGUI
+from gui import activityPanelGUI
 
 # import exporters
-import lessonPlan
+from templates import lessonPlan
 
 
 class MainWindow(QWidget):

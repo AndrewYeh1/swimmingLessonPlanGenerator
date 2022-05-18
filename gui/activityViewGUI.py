@@ -2,22 +2,19 @@
 from functools import partial
 
 # import constant
-import constant
 
 # gui imports
-from PyQt6 import QtGui
-from PyQt6.QtCore import Qt, QThread, QModelIndex
 from PyQt6.QtWidgets import (QWidget,  # window
                              QPushButton, QLabel,  # buttons and labels
-                             QLineEdit, QPlainTextEdit,  # inputs
-                             QTabWidget,  # tabs
-                             QScrollArea,  # scroll
-                             QFrame,  # frame
-                             QInputDialog,  # dialog box
-                             QComboBox,  # drop down menu
-                             QTreeWidget, QTreeWidgetItem,  # treeview
-                             QCheckBox,  # checkbox
-                             QVBoxLayout, QHBoxLayout, QGridLayout,)  # layout management
+    # inputs
+    # tabs
+    # scroll
+    # frame
+    # dialog box
+    # drop down menu
+    # treeview
+    # checkbox
+                             QHBoxLayout, )  # layout management
 
 
 class ActivityView(QWidget):

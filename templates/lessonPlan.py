@@ -1,5 +1,5 @@
 # import templates
-import activityTemplates
+from templates import activityTemplates
 
 # import file exporters
 from exporters import docs, word

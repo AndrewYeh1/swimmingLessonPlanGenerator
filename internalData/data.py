@@ -1,4 +1,4 @@
-import activityTemplates
+from templates import activityTemplates
 
 ACTIVITIES = {
     "Flutter kick": {

@@ -1,24 +1,22 @@
 # import constant
-import constant
+from internalData import constant
 
 # import template
-import activityTemplates
+from templates import activityTemplates
 
 # partial for callback
 from functools import partial
 
 # gui imports
-from PyQt6 import QtGui
-from PyQt6.QtCore import Qt, QThread, QModelIndex
 from PyQt6.QtWidgets import (QWidget,  # window
                              QPushButton, QLabel,  # buttons and labels
                              QLineEdit, QTextEdit,  # inputs
-                             QTabWidget,  # tabs
-                             QScrollArea,  # scroll
+    # tabs
+    # scroll
                              QFrame,  # frame
-                             QInputDialog,  # dialog box
+    # dialog box
                              QComboBox,  # drop down menu
-                             QTreeWidget, QTreeWidgetItem,  # treeview
+    # treeview
                              QCheckBox,  # checkbox
                              QVBoxLayout, QHBoxLayout, QGridLayout,)  # layout management
 

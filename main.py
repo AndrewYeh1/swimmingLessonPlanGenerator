@@ -5,7 +5,7 @@ import sys
 from PyQt6.QtWidgets import QApplication
 
 # python file imports
-import mainWindow
+from gui import mainWindow
 
 
 def main():

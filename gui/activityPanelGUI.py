@@ -1,30 +1,17 @@
 # import constant
-import constant
 
 # import template
-import activityTemplates
+from templates import activityTemplates
 
 # import GUI widgets
-import activityEditGUI
-import activityViewGUI
+from gui import activityEditGUI
+from gui import activityViewGUI
 
 # partial for callback
-from functools import partial
 
 # gui imports
-from PyQt6 import QtGui
-from PyQt6.QtCore import Qt, QThread, QModelIndex
 from PyQt6.QtWidgets import (QWidget,  # window
-                             QPushButton, QLabel,  # buttons and labels
-                             QLineEdit, QPlainTextEdit,  # inputs
-                             QTabWidget,  # tabs
-                             QScrollArea,  # scroll
-                             QFrame,  # frame
-                             QInputDialog,  # dialog box
-                             QComboBox,  # drop down menu
-                             QTreeWidget, QTreeWidgetItem,  # treeview
-                             QCheckBox,  # checkbox
-                             QVBoxLayout, QHBoxLayout, QGridLayout,)  # layout management
+                             QHBoxLayout, )  # layout management
 
 
 class ActivityPanel(QWidget):
