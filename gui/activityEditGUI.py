@@ -11,18 +11,14 @@ from functools import partial
 from PyQt6.QtWidgets import (QWidget,  # window
                              QPushButton, QLabel,  # buttons and labels
                              QLineEdit, QTextEdit,  # inputs
-    # tabs
-    # scroll
                              QFrame,  # frame
-    # dialog box
                              QComboBox,  # drop down menu
-    # treeview
                              QCheckBox,  # checkbox
                              QVBoxLayout, QHBoxLayout, QGridLayout,)  # layout management
 
 
 class ActivityEdit(QWidget):
-    def __init__(self, deleteCallback, confirmCallback, activity, name, *args, **kwargs):
+    def __init__(self, activityChanged, deleteCallback, confirmCallback, activity, name, *args, **kwargs):
         # constants
         TYPES = ["4Ds", "Discovery", "Game"]
 
@@ -60,6 +56,7 @@ class ActivityEdit(QWidget):
 
         # sets up the combo boxes
         self.detailedViewType.addItems(TYPES)
+        self.detailedViewActivity.currentTextChanged.connect(activityChanged)
 
         # bottom bar
         self.bottomBarHBox = QHBoxLayout()
@@ -122,9 +119,15 @@ class ActivityEdit(QWidget):
             self.detailedViewActivity.setCurrentText(activity.activity)
 
     def callback(self):
+        activityToReturn = self.getActivity()
+        name = self.detailedViewName.text()
+        partial(self.confirmCallback, activityToReturn, name)()
+        # noinspection PyTypeChecker
+        self.setParent(None)
+
+    def getActivity(self):
         # extracts data from input fields
         activity = self.detailedViewActivity.currentText()
-        name = self.detailedViewName.text()
         time = int(self.detailedViewTime.text())
         level = self.returnChecked()
         if self.detailedViewType.currentText() == "4Ds":
@@ -134,10 +137,9 @@ class ActivityEdit(QWidget):
         else:
             tp = 3
         instructions = self.detailedViewDescription.toPlainText().split("\n")
-        activityToReturn = activityTemplates.Template(activity=activity, time=time, level=level, tp=tp, description=instructions)
-        partial(self.confirmCallback, activityToReturn, name)()
-        # noinspection PyTypeChecker
-        self.setParent(None)
+        activityToReturn = activityTemplates.Template(activity=activity, time=time, level=level, tp=tp,
+                                                      description=instructions)
+        return activityToReturn
 
     def delete(self):
         self.deleteCallback()

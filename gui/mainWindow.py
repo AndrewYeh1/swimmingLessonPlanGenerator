@@ -186,7 +186,6 @@ class MainWindow(QWidget):
         # amount of times each skill is taught
         self.saveDay()
         activityTimesDict = self.reformat().getActivityAmt()
-        print(activityTimesDict)
         for i in range(self.levelOverviewTreeView.topLevelItemCount()):
             for j in range(self.levelOverviewTreeView.topLevelItem(i).childCount()):
                 activity = self.levelOverviewTreeView.topLevelItem(i).child(j).text(0)
@@ -225,6 +224,7 @@ class MainWindow(QWidget):
         if ACTIVITY.text(0) not in ["Level specific", "Others"]:
             newActivity = activityPanelGUI.ActivityPanel(
                 data.ACTIVITIES[self.selectedActivity][ACTIVITY.text(0)].level,
+                self.setOverviewTaught,
                 activity=data.ACTIVITIES[self.selectedActivity][ACTIVITY.text(0)],
                 name=ACTIVITY.text(0)
             )
@@ -232,7 +232,7 @@ class MainWindow(QWidget):
             self.setOverviewTaught()
 
     def newActivity(self):
-        newActivity = activityPanelGUI.ActivityPanel(self.levelSelect.currentText())
+        newActivity = activityPanelGUI.ActivityPanel(self.levelSelect.currentText(), self.setOverviewTaught)
         self.lessonPlanVBox.insertWidget(self.lessonPlanVBox.count() - 1, newActivity)
         self.setOverviewTaught()
 

@@ -6,14 +6,6 @@ from functools import partial
 # gui imports
 from PyQt6.QtWidgets import (QWidget,  # window
                              QPushButton, QLabel,  # buttons and labels
-    # inputs
-    # tabs
-    # scroll
-    # frame
-    # dialog box
-    # drop down menu
-    # treeview
-    # checkbox
                              QHBoxLayout, )  # layout management
 
 
