@@ -29,6 +29,7 @@ class MainWindow(QWidget):
 
         # variables
         self.selectedActivity = None
+        self.lesson = lessonPlan.LessonPlan()
 
         # constants
         TITLE = "City of edmonton lesson plan generator"
@@ -153,40 +154,44 @@ class MainWindow(QWidget):
         self.lessonPlanVBoxContainer.addLayout(self.lessonPlanControlsHBox)
 
         # populates the level overview
-        self.updateLevelOverview("Swim kids 1", False)
+        self.updateLevelOverview("Swim kids 1")
 
         # set initial ratio of the two sides of the window
         self.mainBodySplitter.setSizes([100, 200])
 
-    def updateLevelOverview(self, LEVEL, clear=True):
-        # amount of times each skill is taught
-        self.saveDay(self.dayNumInt, False)
-        activityTimesDict = self.reformat().getActivityAmt()
+    def updateLevelOverview(self, LEVEL):
         # clears the old list
         self.levelOverviewTreeView.clear()
-        if hasattr(self, "activityOverviewTreeView") and clear:
+        if hasattr(self, "activityOverviewTreeView"):
             self.activityOverviewTreeView.clear()
         # adds the new items
         self.addSectionToOverview("Fitness activities", LEVEL)
         self.addSectionToOverview("Skills and water safety", LEVEL)
         self.addSectionToOverview("Swimming", LEVEL)
+        # adds the amount of times each skill was taught to the overview
+        self.setOverviewTaught()
         # expands everything
         self.levelOverviewTreeView.expandAll()
 
     def addSectionToOverview(self, ACTIVITY, LEVEL):
-        # amount of times each skill is taught
-        self.saveDay(self.dayNumInt, False)
-        activityTimesDict = self.reformat().getActivityAmt()
         # adds to the treeview
         activities = constant.SWIMKIDSSKILLS[LEVEL][ACTIVITY].keys()
         topLevel = QTreeWidgetItem([ACTIVITY])
         for i in activities:
-            item = QTreeWidgetItem([
-                i,
-                f"{0 if activityTimesDict.get(i) is None else activityTimesDict[i]}/3"]
-            )
+            item = QTreeWidgetItem([i])
             topLevel.addChild(item)
         self.levelOverviewTreeView.addTopLevelItem(topLevel)
+
+    def setOverviewTaught(self):
+        # amount of times each skill is taught
+        self.saveDay()
+        activityTimesDict = self.reformat().getActivityAmt()
+        print(activityTimesDict)
+        for i in range(self.levelOverviewTreeView.topLevelItemCount()):
+            for j in range(self.levelOverviewTreeView.topLevelItem(i).childCount()):
+                activity = self.levelOverviewTreeView.topLevelItem(i).child(j).text(0)
+                num = f"{0 if activityTimesDict.get(activity) is None else activityTimesDict[activity]}/3"
+                self.levelOverviewTreeView.topLevelItem(i).child(j).setText(1, num)
 
     def activitySelected(self, ITEM):
         ACTIVITY = ITEM.text(0)
@@ -224,12 +229,12 @@ class MainWindow(QWidget):
                 name=ACTIVITY.text(0)
             )
             self.lessonPlanVBox.insertWidget(self.lessonPlanVBox.count() - 1, newActivity)
-            self.updateLevelOverview(self.levelSelect.currentText(), False)
+            self.setOverviewTaught()
 
     def newActivity(self):
         newActivity = activityPanelGUI.ActivityPanel(self.levelSelect.currentText())
         self.lessonPlanVBox.insertWidget(self.lessonPlanVBox.count() - 1, newActivity)
-        self.updateLevelOverview(self.levelSelect.currentText(), False)
+        self.setOverviewTaught()
 
     def deleteActivity(self, item):
         # noinspection PyTypeChecker
@@ -237,32 +242,35 @@ class MainWindow(QWidget):
 
     def next(self):
         if self.dayNumInt < self.dayTotalInt:
-            # saves the day plan
-            self.saveDay(self.dayNumInt, True)
+            # changes the day
+            self.changeDay(self.dayNumInt + 1)
             # changes day number
             self.dayNumInt += 1
-            # finds the new day plan
-            self.loadDay(self.dayNumInt)
         self.dayNum.setText(str(self.dayNumInt))
 
     def previous(self):
         if self.dayNumInt > 1:
-            # saves the day plan
-            self.saveDay(self.dayNumInt, True)
+            # changes the day
+            self.changeDay(self.dayNumInt - 1)
             # changes day number
             self.dayNumInt -= 1
-            # finds the new day plan
-            self.loadDay(self.dayNumInt)
         self.dayNum.setText(str(self.dayNumInt))
 
-    def saveDay(self, day, delete):
+    def changeDay(self, day):
+        self.saveDay()
+        self.clearDay()
+        self.loadDay(day)
+
+    def clearDay(self):
+        for i in reversed(range(self.lessonPlanVBox.count() - 1)):
+            # noinspection PyTypeChecker
+            self.lessonPlanVBox.itemAt(i).widget().setParent(None)
+
+    def saveDay(self):
         li = []
         for i in reversed(range(self.lessonPlanVBox.count() - 1)):
             li.append(self.lessonPlanVBox.itemAt(i).widget())
-            if delete:
-                # noinspection PyTypeChecker
-                self.lessonPlanVBox.itemAt(i).widget().setParent(None)
-        self.lessonPlanList[day] = li
+        self.lessonPlanList[self.dayNumInt] = li
 
     def loadDay(self, day):
         if self.lessonPlanList.__contains__(day):
@@ -282,7 +290,6 @@ class MainWindow(QWidget):
     def dayTotalChanged(self, txt):
         if not txt == "":
             self.dayTotalInt = int(txt)
-
         else:
             self.dayTotalInt = 0
 
@@ -317,5 +324,4 @@ class MainWindow(QWidget):
             lesson.dayList.append([])
             for activity in self.lessonPlanList[key]:
                 lesson.dayList[-1].append(activity.getData())
-        print(lesson.dayList)
         return lesson

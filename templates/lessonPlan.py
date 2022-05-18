@@ -30,5 +30,4 @@ class LessonPlan:
                     activityDict[activity[1].activity] = 1
                 else:
                     activityDict[activity[1].activity] += 1
-        print(activityDict)
         return activityDict

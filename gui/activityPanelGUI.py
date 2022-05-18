@@ -7,8 +7,6 @@ from templates import activityTemplates
 from gui import activityEditGUI
 from gui import activityViewGUI
 
-# partial for callback
-
 # gui imports
 from PyQt6.QtWidgets import (QWidget,  # window
                              QHBoxLayout, )  # layout management
