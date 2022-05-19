@@ -20,7 +20,7 @@ from PyQt6.QtWidgets import (QWidget,  # window
 class ActivityEdit(QWidget):
     def __init__(self, activityChanged, deleteCallback, confirmCallback, activity, name, *args, **kwargs):
         # constants
-        TYPES = ["4Ds", "Discovery", "Game"]
+        TYPES = constant.TYPE
 
         # calls the super class
         super().__init__(*args, **kwargs)
@@ -183,6 +183,7 @@ class ActivityEdit(QWidget):
                 for i in constant.SWIMKIDSSKILLS[f"Swim kids {index + 1}"].keys():
                     ls.extend(constant.SWIMKIDSSKILLS[f"Swim kids {index + 1}"][i].keys())
         ls = sorted(list(dict.fromkeys(ls)))
+        ls.append("Other")
         self.setActivityOptions(ls)
 
     def setActivityOptions(self, ls):

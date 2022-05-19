@@ -1,5 +1,7 @@
 from templates import activityTemplates
 
+INTRO = activityTemplates.Template("Intro", 5, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 0)
+
 ACTIVITIES = {
     "Flutter kick": {
         "basic": activityTemplates.Template("Flutter kick", 5, [1, 2], 1),

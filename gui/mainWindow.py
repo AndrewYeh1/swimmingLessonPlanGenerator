@@ -18,6 +18,7 @@ from PyQt6.QtWidgets import (QWidget,  # window
 
 # widgets
 from gui import activityPanelGUI
+from gui import intro
 
 # import exporters
 from templates import lessonPlan
@@ -32,14 +33,11 @@ class MainWindow(QWidget):
         self.selectedActivity = None
         self.lesson = lessonPlan.LessonPlan()
 
-        # constants
-        TITLE = "City of edmonton lesson plan generator"
-
         # gets the app for further use
         self.app = app
 
         # sets the window title
-        self.setWindowTitle(TITLE)
+        self.setWindowTitle(constant.TITLE)
 
         # main body hbox and splitter
         self.mainBodyHBox = QHBoxLayout()
@@ -110,14 +108,23 @@ class MainWindow(QWidget):
         # creates the scroll area for the list of activities in the lesson
         self.lessonPlanScrollArea = QScrollArea()
         self.lessonPlanWidget = QWidget()
+        self.lessonPlanScrollAreaLayout = QVBoxLayout()
         self.lessonPlanVBox = QVBoxLayout()
-        self.lessonPlanWidget.setLayout(self.lessonPlanVBox)
+        self.lessonPlanWidget.setLayout(self.lessonPlanScrollAreaLayout)
+        self.lessonPlanScrollAreaLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.lessonPlanVBox.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.lessonPlanScrollArea.setWidgetResizable(True)
         self.lessonPlanScrollArea.setWidget(self.lessonPlanWidget)
 
         # adds the scroll area to the layout
         self.lessonPlanVBoxContainer.addWidget(self.lessonPlanScrollArea)
+
+        # adds the intro button
+        self.introPanel = intro.IntroGUI()
+        self.lessonPlanScrollAreaLayout.addWidget(self.introPanel)
+
+        # adds the lesson plan vbox
+        self.lessonPlanScrollAreaLayout.addLayout(self.lessonPlanVBox)
 
         # adds add new blank to scroll area
         self.newBtn = QPushButton("New")
@@ -160,6 +167,9 @@ class MainWindow(QWidget):
 
         # set initial ratio of the two sides of the window
         self.mainBodySplitter.setSizes([100, 200])
+
+    def intro(self):
+        self.introPanel.toggle()
 
     def updateLevelOverview(self, LEVEL):
         # clears the old list
@@ -211,7 +221,7 @@ class MainWindow(QWidget):
             self.activityOverviewTreeView.clear()
             # adds new entries
             self.addSectionToActivity(levelSpecific, "Level specific")
-            self.addSectionToActivity(nonLevelSpecific, "Others")
+            self.addSectionToActivity(nonLevelSpecific, "Other levels")
 
     def addSectionToActivity(self, ACTIVITIES, NAME):
         topLevel = QTreeWidgetItem([NAME])
@@ -223,7 +233,7 @@ class MainWindow(QWidget):
             topLevel.setExpanded(True)
 
     def activityDetails(self, ACTIVITY):
-        if ACTIVITY.text(0) not in ["Level specific", "Others"]:
+        if ACTIVITY.text(0) not in ["Level specific", "Other levels"]:
             newActivity = activityPanelGUI.ActivityPanel(
                 data.ACTIVITIES[self.selectedActivity][ACTIVITY.text(0)].level,
                 self.setOverviewTaught,

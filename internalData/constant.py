@@ -1,3 +1,7 @@
+TITLE = "City of Edmonton Swimming Lesson Plan Generator"
+
+TYPE = ["Other", "4Ds", "Discovery", "Game"]
+
 SWIMKIDSSKILLS = {
     "Swim kids 1": {
         "Fitness activities": {
