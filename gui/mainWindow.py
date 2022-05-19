@@ -159,6 +159,10 @@ class MainWindow(QWidget):
         # set initial ratio of the two sides of the window
         self.mainBodySplitter.setSizes([100, 200])
 
+        # adds the intro if it is on
+        if presets.introDefault:
+            self.addIntro()
+
     def updateLevelOverview(self, LEVEL):
         # clears the old list
         self.levelOverviewTreeView.clear()
@@ -219,6 +223,17 @@ class MainWindow(QWidget):
         self.activityOverviewTreeView.addTopLevelItem(topLevel)
         if NAME == "Level specific":
             topLevel.setExpanded(True)
+
+    def addIntro(self):
+        newActivity = activityPanelGUI.ActivityPanel(
+            presets.intro.level,
+            self.setOverviewTaught,
+            activity=presets.intro,
+            name="Intro",
+            tp="Collapsed"
+        )
+        self.lessonPlanVBox.insertWidget(self.lessonPlanVBox.count() - 1, newActivity)
+        self.setOverviewTaught()
 
     def activityDetails(self, ACTIVITY):
         if ACTIVITY.text(0) not in ["Level specific", "Other levels"]:

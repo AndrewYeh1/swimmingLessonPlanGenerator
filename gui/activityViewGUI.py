@@ -51,9 +51,9 @@ class ActivityView(QWidget):
         self.setLayout(self.mainHBox)
 
     def expand(self):
-        partial(self.toggleCallback, self.activity, self.name)()
         # noinspection PyTypeChecker
         self.setParent(None)
+        partial(self.toggleCallback, self.activity, self.name)()
 
     def delete(self):
         self.deleteCallback()

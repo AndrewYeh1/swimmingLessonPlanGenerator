@@ -53,7 +53,6 @@ class ActivityPanel(QWidget):
         self.name = name
         self.activity = activity
         self.mainHBox.addWidget(collapsedView)
-        self.updateActivityAndPlan()
 
     def changeToExpandedView(self, activity, name):
         expandedView = activityEditGUI.ActivityEdit(self.updateActivityAndPlan, self.delete, self.changeToCollapsedView, activity, name)

@@ -117,6 +117,8 @@ class ActivityEdit(QWidget):
             self.detailedViewType.setCurrentIndex(TYPES.index(activity.tp))
         if activity.activity is not None:
             self.detailedViewActivity.setCurrentText(activity.activity)
+        if activity.description is not None:
+            self.detailedViewDescription.setText("\n".join(activity.description))
 
     def callback(self):
         activityToReturn = self.getActivity()
