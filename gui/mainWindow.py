@@ -18,7 +18,6 @@ from PyQt6.QtWidgets import (QWidget,  # window
 
 # widgets
 from gui import activityPanelGUI
-from gui import intro
 
 # import exporters
 from templates import lessonPlan
@@ -108,23 +107,15 @@ class MainWindow(QWidget):
         # creates the scroll area for the list of activities in the lesson
         self.lessonPlanScrollArea = QScrollArea()
         self.lessonPlanWidget = QWidget()
-        self.lessonPlanScrollAreaLayout = QVBoxLayout()
         self.lessonPlanVBox = QVBoxLayout()
-        self.lessonPlanWidget.setLayout(self.lessonPlanScrollAreaLayout)
-        self.lessonPlanScrollAreaLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.lessonPlanWidget.setLayout(self.lessonPlanVBox)
+        self.lessonPlanVBox.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.lessonPlanVBox.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.lessonPlanScrollArea.setWidgetResizable(True)
         self.lessonPlanScrollArea.setWidget(self.lessonPlanWidget)
 
         # adds the scroll area to the layout
         self.lessonPlanVBoxContainer.addWidget(self.lessonPlanScrollArea)
-
-        # adds the intro button
-        self.introPanel = intro.IntroGUI()
-        self.lessonPlanScrollAreaLayout.addWidget(self.introPanel)
-
-        # adds the lesson plan vbox
-        self.lessonPlanScrollAreaLayout.addLayout(self.lessonPlanVBox)
 
         # adds add new blank to scroll area
         self.newBtn = QPushButton("New")
@@ -167,9 +158,6 @@ class MainWindow(QWidget):
 
         # set initial ratio of the two sides of the window
         self.mainBodySplitter.setSizes([100, 200])
-
-    def intro(self):
-        self.introPanel.toggle()
 
     def updateLevelOverview(self, LEVEL):
         # clears the old list
