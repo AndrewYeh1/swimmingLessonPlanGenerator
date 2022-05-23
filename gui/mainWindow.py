@@ -19,6 +19,9 @@ from PyQt6.QtWidgets import (QWidget,  # window
 # widgets
 from gui import activityPanelGUI
 
+# windows
+from gui import preferencesPopup
+
 # import exporters
 from templates import lessonPlan
 
@@ -34,6 +37,9 @@ class MainWindow(QWidget):
 
         # gets the app for further use
         self.app = app
+
+        # popups
+        self.preferencesWindow = preferencesPopup.Preferences()
 
         # sets the window title
         self.setWindowTitle(constant.TITLE)
@@ -65,7 +71,7 @@ class MainWindow(QWidget):
         self.helpMenu.addAction("Support", self.support)
         self.helpMenu.addAction("Terms and conditions", self.terms)
         self.settingsMenu.addAction("Weighting", self.weighting)
-        self.settingsMenu.addAction("Auto save", self.autoSave)
+        self.settingsMenu.addAction("Preferences", self.preferences)
         self.topBar.addMenu(self.fileMenu)
         self.topBar.addMenu(self.exportMenu)
         self.topBar.addMenu(self.helpMenu)
@@ -153,14 +159,14 @@ class MainWindow(QWidget):
         self.lessonPlanVBoxContainer.addLayout(self.lessonPlanControlsHBox)
 
         # populates the level overview with the default level
-        self.levelSelect.setCurrentText(presets.defaultLevel)
-        self.updateLevelOverview(presets.defaultLevel)
+        self.levelSelect.setCurrentText(presets.options["Others"]["defaultLevel"])
+        self.updateLevelOverview(presets.options["Others"]["defaultLevel"])
 
         # set initial ratio of the two sides of the window
         self.mainBodySplitter.setSizes([100, 200])
 
         # adds the intro if it is on
-        if presets.introDefault:
+        if presets.options["Intro"]["introDefault"]:
             self.addIntro()
 
     def updateLevelOverview(self, LEVEL):
@@ -226,9 +232,9 @@ class MainWindow(QWidget):
 
     def addIntro(self):
         newActivity = activityPanelGUI.ActivityPanel(
-            presets.intro.level,
+            presets.options["Intro"]["intro"].level,
             self.setOverviewTaught,
-            activity=presets.intro,
+            activity=presets.options["Intro"]["intro"],
             name="Intro",
             tp="Collapsed"
         )
@@ -323,8 +329,8 @@ class MainWindow(QWidget):
     def weighting(self):
         pass
 
-    def autoSave(self):
-        pass
+    def preferences(self):
+        self.preferencesWindow.show()
 
     def word(self):
         lesson = self.reformat()
