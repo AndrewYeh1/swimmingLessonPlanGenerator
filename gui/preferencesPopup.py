@@ -38,15 +38,15 @@ class Preferences(QWidget):
         self.tabWidget = QTabWidget()
         self.mainHBox.addWidget(self.tabWidget)
 
-        # adds tabs too the tab box
-        self.tabs = []
-        for items in presets.options.items():
-            self.tabs.append(QWidget())
-            self.tabWidget.addTab(self.tabs[-1], items[0])
+        # adds tabs to the tab box
+        self.tabIntro = QWidget()
+        self.tabOthers = QWidget()
+        self.tabWidget.addTab(self.tabIntro, "Intro")
+        self.tabWidget.addTab(self.tabOthers, "Others")
 
         # intro tab
         self.introVBox = QVBoxLayout()
-        self.tabs[0].setLayout(self.introVBox)
+        self.tabIntro.setLayout(self.introVBox)
 
         self.introComboBox = QComboBox()
         self.introOnOff = QCheckBox("Add intro to every day by default")
@@ -57,7 +57,7 @@ class Preferences(QWidget):
 
         # others tab
         self.otherVBox = QVBoxLayout()
-        self.tabs[1].setLayout(self.otherVBox)
+        self.tabOthers.setLayout(self.otherVBox)
 
         self.othersLevelComboBox = QComboBox()
         self.othersLevelComboBox.addItems(constant.SWIMKIDSLIST)
@@ -66,12 +66,12 @@ class Preferences(QWidget):
 
 
 def toggleIntroOnOff(state):
-    if state == Qt.CheckState.Checked.value:
-        presets.options["Intro"]["introDefault"] = True
-    else:
-        presets.options["Intro"]["introDefault"] = False
+    config = presets.getConfig()
+    config["Intro"]["enabled"] = "true" if state == Qt.CheckState.Checked.value else "false"
+    presets.setConfig(config)
 
 
 def levelChanged(level):
-    presets.options["Others"]["defaultLevel"] = level
-print(presets.options["Others"]["defaultLevel"])
+    config = presets.getConfig()
+    config["Others"]["defaultLevel"] = level
+    presets.setConfig(config)

@@ -1,11 +1,12 @@
-from templates import activityTemplates
+import configparser
 
-options = {
-    "Intro": {
-        "intro": activityTemplates.Template("Other", 5, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 0, ["Introduce myself"]),
-        "introDefault": True
-    },
-    "Others": {
-        "defaultLevel": "Swim kids 1"
-    }
-}
+
+def getConfig():
+    config = configparser.ConfigParser()
+    config.read("config.ini")
+    return config
+
+
+def setConfig(config: configparser.ConfigParser):
+    with open("config.ini", "w") as configFile:
+        config.write(configFile)

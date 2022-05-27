@@ -159,14 +159,14 @@ class MainWindow(QWidget):
         self.lessonPlanVBoxContainer.addLayout(self.lessonPlanControlsHBox)
 
         # populates the level overview with the default level
-        self.levelSelect.setCurrentText(presets.options["Others"]["defaultLevel"])
-        self.updateLevelOverview(presets.options["Others"]["defaultLevel"])
+        self.levelSelect.setCurrentText(presets.getConfig()["Others"]["defaultLevel"])
+        self.updateLevelOverview(presets.getConfig()["Others"]["defaultLevel"])
 
         # set initial ratio of the two sides of the window
         self.mainBodySplitter.setSizes([100, 200])
 
         # adds the intro if it is on
-        if presets.options["Intro"]["introDefault"]:
+        if presets.getConfig()["Intro"]["enabled"] == "true":
             self.addIntro()
 
     def updateLevelOverview(self, LEVEL):

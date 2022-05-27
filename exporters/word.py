@@ -1,16 +1,20 @@
 import docx
-from docx.shared import Inches
+from docx.enum.table import WD_TABLE_ALIGNMENT
+
+from templates import lessonPlan
 
 
 class Word:
-    def __init__(self, activityList):
-        self.activityList = activityList
+    def __init__(self, plan: lessonPlan):
+        self.plan = plan
         self.doc = docx.Document()
 
     def export(self):
+        # creates table
         table = self.doc.add_table(rows=1, cols=4)
-        table.autofit = False
+        table.alignment = WD_TABLE_ALIGNMENT.CENTER
         table.style = "Table Grid"
+
         # generate header
         cell = table.cell(0, 0)
         cell.text = "Hello"

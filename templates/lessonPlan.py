@@ -1,23 +1,19 @@
 # import templates
 from templates import activityTemplates
 
-# import file exporters
-from exporters import docs, word
-
 
 class LessonPlan:
-    def __init__(self, dayList=None):
+    def __init__(self, dayList=None, wsi="", date="", course="", location="", time=60, lessonNum=0):
+        self.wsi = wsi
+        self.date = date
+        self.course = course
+        self.location = location
+        self.time = time
+        self.lessonNum = lessonNum
         if dayList is None:
             self.dayList = []
         else:
             self.dayList = dayList
-
-    def exportToWord(self):
-        wordExporter = word.Word(self.dayList)
-        wordExporter.export()
-
-    def exportToDocs(self):
-        pass
 
     def getPreview(self):
         pass
