@@ -11,15 +11,13 @@ class Word:
 
     def export(self):
         # creates table
-        table = self.doc.add_table(rows=1, cols=4)
+        table = self.doc.add_table(rows=3, cols=4)
         table.alignment = WD_TABLE_ALIGNMENT.CENTER
         table.style = "Table Grid"
 
         # generate header
-        cell = table.cell(0, 0)
-        cell.text = "Hello"
-        cell = table.cell(0, 1)
-        cell.text = "Hi"
+        courseCell = table.cell(0, 0).merge(table.cell(0, 1))
+        courseCell.text = self.plan.course
         # exports the word document
         self.doc.save("test.docx")
 

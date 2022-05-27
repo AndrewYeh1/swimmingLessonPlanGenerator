@@ -1,4 +1,5 @@
 # import constant
+import exporters.word
 from internalData import constant, presets
 
 # import data
@@ -14,10 +15,11 @@ from PyQt6.QtWidgets import (QWidget,  # window
                              QTreeWidget, QTreeWidgetItem,  # treeview
                              QSplitter,  # advanced layout management
                              QMenu, QMenuBar,  # top bar
-                             QVBoxLayout, QHBoxLayout, )  # layout management
+                             QVBoxLayout, QHBoxLayout, QGridLayout)  # layout management
 
 # widgets
 from gui import activityPanelGUI
+from gui import lessonPlanHeaderGUI
 
 # windows
 from gui import preferencesPopup
@@ -109,6 +111,20 @@ class MainWindow(QWidget):
         self.lessonPlanVBoxContainer = QVBoxLayout()
         self.lessonPlanWidgetContainer.setLayout(self.lessonPlanVBoxContainer)
         self.mainBodySplitter.addWidget(self.lessonPlanWidgetContainer)
+
+        # creates the header area for the lesson plan
+        self.headerBtnOpen = QPushButton("Show")
+        self.headerBtnClose = QPushButton("Hide")
+        self.headerBtnOpen.clicked.connect(self.openHeader)
+        self.headerBtnClose.clicked.connect(self.closeHeader)
+        self.header = lessonPlanHeaderGUI.LessonPlanHeader()
+        self.lessonPlanVBoxContainer.addWidget(self.headerBtnOpen)
+        self.lessonPlanVBoxContainer.addWidget(self.headerBtnClose)
+        self.lessonPlanVBoxContainer.addWidget(self.header)
+        if presets.getConfig()["GUI"]["showHeader"] == "true":
+            self.openHeader()
+        else:
+            self.closeHeader()
 
         # creates the scroll area for the list of activities in the lesson
         self.lessonPlanScrollArea = QScrollArea()
@@ -314,6 +330,16 @@ class MainWindow(QWidget):
         else:
             self.dayTotalInt = 0
 
+    def openHeader(self):
+        self.header.show()
+        self.headerBtnClose.show()
+        self.headerBtnOpen.hide()
+
+    def closeHeader(self):
+        self.header.hide()
+        self.headerBtnOpen.show()
+        self.headerBtnClose.hide()
+
     def save(self):
         pass
 
@@ -334,7 +360,8 @@ class MainWindow(QWidget):
 
     def word(self):
         lesson = self.reformat()
-        lesson.exportToWord()
+        wordExporter = exporters.word.Word(lesson)
+        wordExporter.export()
 
     def docs(self):
         pass
