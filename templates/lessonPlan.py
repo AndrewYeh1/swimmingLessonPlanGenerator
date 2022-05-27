@@ -3,13 +3,10 @@ from templates import activityTemplates
 
 
 class LessonPlan:
-    def __init__(self, dayList=None, wsi="", date="", course="", location="", time=60, lessonNum=0):
+    def __init__(self, dayList=None, wsi="", date="", course="", location=""):
         self.wsi = wsi
-        self.date = date
         self.course = course
         self.location = location
-        self.time = time
-        self.lessonNum = lessonNum
         if dayList is None:
             self.dayList = []
         else:

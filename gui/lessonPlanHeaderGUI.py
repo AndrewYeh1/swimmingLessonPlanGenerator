@@ -30,25 +30,19 @@ class LessonPlanHeader(QWidget):
         # creates the labels and input fields
         self.courseLabel = QLabel("Course:")
         self.wsiNameLabel = QLabel("WSI name:")
-        self.dateLabel = QLabel("Date:")
-        self.timeLabel = QLabel("Time:")
         self.locationLabel = QLabel("Location:")
         self.courseInput = QLineEdit()
         self.wsiNameInput = QLineEdit()
-        self.dateInput = QLineEdit()
-        self.timeInput = QLineEdit()
         self.locationInput = QLineEdit()
+        self.wsiNameInput.setText(presets.getConfig()["Personal"]["wsiName"])
+        self.locationInput.setText(presets.getConfig()["Personal"]["location"])
 
         # adds the widgets to the grid
         self.mainGrid.addWidget(self.courseLabel, 0, 0)
         self.mainGrid.addWidget(self.wsiNameLabel, 1, 0)
-        self.mainGrid.addWidget(self.dateLabel, 2, 0)
-        self.mainGrid.addWidget(self.timeLabel, 3, 0)
         self.mainGrid.addWidget(self.locationLabel, 4, 0)
         self.mainGrid.addWidget(self.courseInput, 0, 1)
         self.mainGrid.addWidget(self.wsiNameInput, 1, 1)
-        self.mainGrid.addWidget(self.dateInput, 2, 1)
-        self.mainGrid.addWidget(self.timeInput, 3, 1)
         self.mainGrid.addWidget(self.locationInput, 4, 1)
 
         # sets its own layout

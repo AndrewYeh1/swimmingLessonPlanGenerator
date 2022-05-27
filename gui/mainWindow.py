@@ -15,7 +15,7 @@ from PyQt6.QtWidgets import (QWidget,  # window
                              QTreeWidget, QTreeWidgetItem,  # treeview
                              QSplitter,  # advanced layout management
                              QMenu, QMenuBar,  # top bar
-                             QVBoxLayout, QHBoxLayout, QGridLayout)  # layout management
+                             QVBoxLayout, QHBoxLayout)  # layout management
 
 # widgets
 from gui import activityPanelGUI
@@ -198,6 +198,9 @@ class MainWindow(QWidget):
         self.setOverviewTaught()
         # expands everything
         self.levelOverviewTreeView.expandAll()
+        # sets the level of the lesson plan header
+        if presets.getConfig()["GUI"]["linkCourseToMain"] == "true":
+            self.header.courseInput.setText(LEVEL)
 
     def addSectionToOverview(self, ACTIVITY, LEVEL):
         # adds to the treeview
@@ -340,6 +343,12 @@ class MainWindow(QWidget):
         self.headerBtnOpen.show()
         self.headerBtnClose.hide()
 
+    def getHeader(self, lesson: lessonPlan):
+        lesson.wsi = self.header.wsiNameInput.text()
+        lesson.course = self.header.courseInput.text()
+        lesson.location = self.header.locationInput.text()
+        return lesson
+
     def save(self):
         pass
 
@@ -372,4 +381,5 @@ class MainWindow(QWidget):
             lesson.dayList.append([])
             for activity in self.lessonPlanList[key]:
                 lesson.dayList[-1].append(activity.getData())
+        lesson = self.getHeader(lesson)
         return lesson
