@@ -27,6 +27,9 @@ from gui import preferencesPopup
 # import exporters
 from templates import lessonPlan
 
+# import file managers
+from fileManager import load, save
+
 
 class MainWindow(QWidget):
     def __init__(self, app):
@@ -350,10 +353,10 @@ class MainWindow(QWidget):
         return lesson
 
     def save(self):
-        pass
+        save.save(self.reformat())
 
     def load(self):
-        pass
+        load.load(self.reformat())
 
     def support(self):
         pass

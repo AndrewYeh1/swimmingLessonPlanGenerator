@@ -10,8 +10,8 @@ class Word:
         self.plan = plan
 
     def export(self):
-        for i in self.plan.dayList:
-            self.exportDay(i)
+        for day in self.plan.dayList:
+            self.exportDay(day)
 
     def exportDay(self, day):
         doc = docx.Document()
@@ -58,7 +58,7 @@ class Word:
     # noinspection PyMethodMayBeStatic
     def addActivity(self, table, activity):
         row = table.add_row()
-        row.cells[0].paragraphs[0].add_run(str(activity.time), "min")
+        row.cells[0].paragraphs[0].add_run(str(activity.time) + " min")
         row.cells[1].paragraphs[0].add_run("\n".join(activity.description))
         row.cells[2].paragraphs[0].add_run("Formation")
         row.cells[3].paragraphs[0].add_run("Equipment")
