@@ -50,7 +50,6 @@ class Word:
 
         for i in day:
             table = self.addActivity(table, i)
-            # i[1] is to access the actual activity instead of the list with its name
 
         # exports the word document
         doc.save("test.docx")

@@ -24,3 +24,11 @@ class LessonPlan:
                 else:
                     activityDict[activity.activity] += 1
         return activityDict
+
+    def getAllActivities(self):
+        activityList = []
+        for day in self.dayList:
+            for activity in day:
+                if activity.name not in [i.name for i in activityList]:
+                    activityList.append(activity)
+        return activityList

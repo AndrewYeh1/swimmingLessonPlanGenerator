@@ -315,7 +315,7 @@ class MainWindow(QWidget):
 
     def saveDay(self):
         li = []
-        for i in reversed(range(self.lessonPlanVBox.count() - 1)):
+        for i in range(self.lessonPlanVBox.count() - 1):
             li.append(self.lessonPlanVBox.itemAt(i).widget())
         self.lessonPlanList[self.dayNumInt] = li
 
