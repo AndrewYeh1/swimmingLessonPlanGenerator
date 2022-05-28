@@ -214,10 +214,14 @@ class MainWindow(QWidget):
             topLevel.addChild(item)
         self.levelOverviewTreeView.addTopLevelItem(topLevel)
 
+    def updateLessonPlan(self):
+        self.saveDay()
+        self.reformat()
+        self.setOverviewTaught()
+
     def setOverviewTaught(self):
         # amount of times each skill is taught
-        self.saveDay()
-        activityTimesDict = self.reformat().getActivityAmt()
+        activityTimesDict = self.lesson.getActivityAmt()
         for i in range(self.levelOverviewTreeView.topLevelItemCount()):
             for j in range(self.levelOverviewTreeView.topLevelItem(i).childCount()):
                 activity = self.levelOverviewTreeView.topLevelItem(i).child(j).text(0)
@@ -231,12 +235,11 @@ class MainWindow(QWidget):
             LEVEL = int(self.levelSelect.currentText()[-1])
             levelSpecific = []
             nonLevelSpecific = []
-            for key in data.ACTIVITIES[ACTIVITY].keys():
-                value = data.ACTIVITIES[ACTIVITY][key]
-                if value.validForLevel(LEVEL):
-                    levelSpecific.append([key, value])
+            for i in data.ACTIVITIES[ACTIVITY]:
+                if i.validForLevel(LEVEL):
+                    levelSpecific.append([i.name, i])
                 else:
-                    nonLevelSpecific.append([key, value])
+                    nonLevelSpecific.append([i.name, i])
             # clears the old list
             self.activityOverviewTreeView.clear()
             # adds new entries
@@ -254,30 +257,31 @@ class MainWindow(QWidget):
 
     def addIntro(self):
         newActivity = activityPanelGUI.ActivityPanel(
-            presets.options["Intro"]["intro"].level,
-            self.setOverviewTaught,
-            activity=presets.options["Intro"]["intro"],
+            data.intro.level,
+            self.updateLessonPlan,
+            activity=data.intro,
             name="Intro",
             tp="Collapsed"
         )
         self.lessonPlanVBox.insertWidget(self.lessonPlanVBox.count() - 1, newActivity)
-        self.setOverviewTaught()
+        self.updateLessonPlan()
 
     def activityDetails(self, ACTIVITY):
         if ACTIVITY.text(0) not in ["Level specific", "Other levels"]:
+            activitySection = data.ACTIVITIES[self.selectedActivity]
+            activity = activitySection[[i.name for i in activitySection].index(ACTIVITY.text(0))]
             newActivity = activityPanelGUI.ActivityPanel(
-                data.ACTIVITIES[self.selectedActivity][ACTIVITY.text(0)].level,
-                self.setOverviewTaught,
-                activity=data.ACTIVITIES[self.selectedActivity][ACTIVITY.text(0)],
-                name=ACTIVITY.text(0)
+                activity.level,
+                self.updateLessonPlan,
+                activity=activity
             )
             self.lessonPlanVBox.insertWidget(self.lessonPlanVBox.count() - 1, newActivity)
-            self.setOverviewTaught()
+            self.updateLessonPlan()
 
     def newActivity(self):
-        newActivity = activityPanelGUI.ActivityPanel(self.levelSelect.currentText(), self.setOverviewTaught)
+        newActivity = activityPanelGUI.ActivityPanel(self.levelSelect.currentText(), self.updateLessonPlan)
         self.lessonPlanVBox.insertWidget(self.lessonPlanVBox.count() - 1, newActivity)
-        self.setOverviewTaught()
+        self.updateLessonPlan()
 
     def deleteActivity(self, item):
         # noinspection PyTypeChecker
@@ -353,9 +357,11 @@ class MainWindow(QWidget):
         return lesson
 
     def save(self):
+        self.saveDay()
         save.save(self.reformat())
 
     def load(self):
+        self.saveDay()
         load.load(self.reformat())
 
     def support(self):
@@ -371,8 +377,8 @@ class MainWindow(QWidget):
         self.preferencesWindow.show()
 
     def word(self):
-        lesson = self.reformat()
-        wordExporter = exporters.word.Word(lesson)
+        self.saveDay()
+        wordExporter = exporters.word.Word(self.lesson)
         wordExporter.export()
 
     def docs(self):
@@ -385,4 +391,4 @@ class MainWindow(QWidget):
             for activity in self.lessonPlanList[key]:
                 lesson.dayList[-1].append(activity.getData())
         lesson = self.getHeader(lesson)
-        return lesson
+        self.lesson = lesson

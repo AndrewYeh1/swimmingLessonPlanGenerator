@@ -13,12 +13,11 @@ from PyQt6.QtWidgets import (QWidget,  # window
 
 
 class ActivityPanel(QWidget):
-    def __init__(self, level, updateLessonPlan, name="New", tp="Expanded", activity=None, *args, **kwargs):
+    def __init__(self, level, updateLessonPlan, tp="Expanded", activity=None, *args, **kwargs):
         # callback function
         self.updateLessonPlan = updateLessonPlan
 
         # variables
-        self.name = name
         self.activity = activity
 
         # calls the super class
@@ -28,17 +27,24 @@ class ActivityPanel(QWidget):
         self.mainHBox = QHBoxLayout()
         self.mainHBox.setContentsMargins(0, 0, 0, 0)
 
+        # sets value of activity
+        self.tp = tp
+        if self.activity is None:
+            self.activity = activityTemplates.Template(level=[level])
+
+        # adds the collapsed and expanded view
+        self.collapsedView = activityViewGUI.ActivityView(self.delete, self.changeToExpandedView, self.activity)
+        self.expandedView = activityEditGUI.ActivityEdit(self.updateActivity, self.delete,
+                                                         self.changeToCollapsedView,
+                                                         self.activity)
+        self.mainHBox.addWidget(self.collapsedView)
+        self.mainHBox.addWidget(self.expandedView)
+
         # opens up expanded or collapsed view
         if tp == "Expanded":
-            if activity is None:
-                self.changeToExpandedView(activityTemplates.Template(level=[level]), name=name)
-            else:
-                self.changeToExpandedView(activity, name=name)
+            self.collapsedView.hide()
         else:
-            if activity is None:
-                self.changeToCollapsedView(activityTemplates.Template(level=[level]), name=name)
-            else:
-                self.changeToCollapsedView(activity, name=name)
+            self.expandedView.hide()
 
         # sets its own layout
         self.setLayout(self.mainHBox)
@@ -48,24 +54,20 @@ class ActivityPanel(QWidget):
         self.setParent(None)
         self.updateLessonPlan()
 
-    def changeToCollapsedView(self, activity, name):
-        collapsedView = activityViewGUI.ActivityView(self.delete, self.changeToExpandedView, activity, name)
-        self.name = name
-        self.activity = activity
-        self.mainHBox.addWidget(collapsedView)
+    def changeToCollapsedView(self):
+        self.collapsedView.show()
+        self.expandedView.hide()
+        self.tp = "Collapsed"
 
-    def changeToExpandedView(self, activity, name):
-        expandedView = activityEditGUI.ActivityEdit(self.updateActivityAndPlan, self.delete, self.changeToCollapsedView, activity, name)
-        self.name = name
-        self.activity = activity
-        self.mainHBox.addWidget(expandedView)
-        self.updateActivityAndPlan()
+    def changeToExpandedView(self):
+        self.collapsedView.hide()
+        self.expandedView.show()
+        self.tp = "Expanded"
 
-    def updateActivityAndPlan(self):
-        if self.mainHBox.itemAt(0) is not None:
-            # noinspection PyUnresolvedReferences
-            self.activity = self.mainHBox.itemAt(0).widget().getActivity()
+    def updateActivity(self):
+        # noinspection PyUnresolvedReferences
+        self.activity = self.expandedView.getActivity()
         self.updateLessonPlan()
 
     def getData(self):
-        return [self.name, self.activity]
+        return self.activity

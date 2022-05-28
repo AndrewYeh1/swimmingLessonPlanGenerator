@@ -49,7 +49,7 @@ class Word:
         table.cell(2, 3).paragraphs[0].add_run("Equipment").bold = True
 
         for i in day:
-            table = self.addActivity(table, i[1])
+            table = self.addActivity(table, i)
             # i[1] is to access the actual activity instead of the list with its name
 
         # exports the word document

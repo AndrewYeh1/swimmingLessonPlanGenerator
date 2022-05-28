@@ -10,12 +10,11 @@ from PyQt6.QtWidgets import (QWidget,  # window
 
 
 class ActivityView(QWidget):
-    def __init__(self, deleteCallback, toggleCallback, activity, name, *args, **kwargs):
+    def __init__(self, deleteCallback, toggleCallback, activity, *args, **kwargs):
         # calls the super class
         super().__init__(*args, **kwargs)
 
         # gets activity and name
-        self.name = name
         self.activity = activity
 
         # gets the callback function
@@ -42,8 +41,8 @@ class ActivityView(QWidget):
         self.mainHBox.addWidget(self.deleteBtn)
 
         # adds data to fields
-        if self.name is not None:
-            self.nameLabel.setText(self.name)
+        if self.activity.name is not None:
+            self.nameLabel.setText(self.activity.name)
         if self.activity.time is not None:
             self.timeLabel.setText(str(self.activity.time) + " min")
 
@@ -51,9 +50,7 @@ class ActivityView(QWidget):
         self.setLayout(self.mainHBox)
 
     def expand(self):
-        # noinspection PyTypeChecker
-        self.setParent(None)
-        partial(self.toggleCallback, self.activity, self.name)()
+        self.toggleCallback()
 
     def delete(self):
         self.deleteCallback()

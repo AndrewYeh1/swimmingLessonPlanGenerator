@@ -2,7 +2,8 @@ from internalData import constant
 
 
 class Template:
-    def __init__(self, activity=None, time=0, level=None, tp=1, description=None):
+    def __init__(self, name="", activity=None, time=0, level=None, tp=1, description=None):
+        self.name = name
         self.activity = activity
         self.time = time
         if level is None:

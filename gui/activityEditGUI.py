@@ -18,7 +18,7 @@ from PyQt6.QtWidgets import (QWidget,  # window
 
 
 class ActivityEdit(QWidget):
-    def __init__(self, activityChanged, deleteCallback, confirmCallback, activity, name, *args, **kwargs):
+    def __init__(self, activityChanged, deleteCallback, confirmCallback, activity, *args, **kwargs):
         # constants
         TYPES = constant.TYPE
 
@@ -56,7 +56,6 @@ class ActivityEdit(QWidget):
 
         # sets up the combo boxes
         self.detailedViewType.addItems(TYPES)
-        self.detailedViewActivity.currentTextChanged.connect(activityChanged)
 
         # bottom bar
         self.bottomBarHBox = QHBoxLayout()
@@ -109,8 +108,8 @@ class ActivityEdit(QWidget):
         self.setLayout(self.mainHBox)
 
         # fills in the input boxes if there is data
-        if name is not None:
-            self.detailedViewName.setText(name)
+        if activity.name is not None:
+            self.detailedViewName.setText(activity.name)
         if activity.time is not None:
             self.detailedViewTime.setText(str(activity.time))
         if activity.tp is not None:
@@ -120,15 +119,19 @@ class ActivityEdit(QWidget):
         if activity.description is not None:
             self.detailedViewDescription.setText("\n".join(activity.description))
 
+        # causes changes to the text box to callback
+        self.detailedViewName.textChanged.connect(activityChanged)
+        self.detailedViewTime.textChanged.connect(activityChanged)
+        self.detailedViewType.currentTextChanged.connect(activityChanged)
+        self.detailedViewActivity.currentTextChanged.connect(activityChanged)
+        self.detailedViewDescription.textChanged.connect(activityChanged)
+
     def callback(self):
-        activityToReturn = self.getActivity()
-        name = self.detailedViewName.text()
-        partial(self.confirmCallback, activityToReturn, name)()
-        # noinspection PyTypeChecker
-        self.setParent(None)
+        self.confirmCallback()
 
     def getActivity(self):
         # extracts data from input fields
+        name = self.detailedViewName.text()
         activity = self.detailedViewActivity.currentText()
         time = int(self.detailedViewTime.text())
         level = self.returnChecked()
@@ -139,7 +142,7 @@ class ActivityEdit(QWidget):
         else:
             tp = 3
         instructions = self.detailedViewDescription.toPlainText().split("\n")
-        activityToReturn = activityTemplates.Template(activity=activity, time=time, level=level, tp=tp,
+        activityToReturn = activityTemplates.Template(name=name, activity=activity, time=time, level=level, tp=tp,
                                                       description=instructions)
         return activityToReturn
 

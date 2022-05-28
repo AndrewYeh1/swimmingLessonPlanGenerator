@@ -19,8 +19,8 @@ class LessonPlan:
         activityDict = {}
         for day in self.dayList:
             for activity in day:
-                if activity[1].activity not in activityDict:
-                    activityDict[activity[1].activity] = 1
+                if activity.activity not in activityDict:
+                    activityDict[activity.activity] = 1
                 else:
-                    activityDict[activity[1].activity] += 1
+                    activityDict[activity.activity] += 1
         return activityDict
