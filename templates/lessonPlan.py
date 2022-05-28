@@ -3,7 +3,7 @@ from templates import activityTemplates
 
 
 class LessonPlan:
-    def __init__(self, dayList=None, wsi="", date="", course="", location=""):
+    def __init__(self, dayList=None, wsi="", course="", location=""):
         self.wsi = wsi
         self.course = course
         self.location = location
