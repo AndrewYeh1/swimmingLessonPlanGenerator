@@ -23,12 +23,10 @@ from gui import lessonPlanHeaderGUI
 
 # windows
 from gui import preferencesPopup
+from gui import saveGUI, loadGUI
 
 # import exporters
 from templates import lessonPlan
-
-# import file managers
-from fileManager import load, save
 
 
 class MainWindow(QWidget):
@@ -45,6 +43,8 @@ class MainWindow(QWidget):
 
         # popups
         self.preferencesWindow = preferencesPopup.Preferences()
+        self.saveWindow = saveGUI.SaveGUI()
+        self.loadWindow = loadGUI.LoadGUI()
 
         # sets the window title
         self.setWindowTitle(constant.TITLE)
@@ -357,12 +357,15 @@ class MainWindow(QWidget):
         return lesson
 
     def save(self):
-        self.saveDay()
-        save.save(self.reformat())
+        self.saveWindow.giveLesson(self.lesson)
+        self.saveWindow.save()
 
     def load(self):
-        self.saveDay()
-        load.load(self.reformat())
+        self.lesson = self.loadWindow.load()
+        self.updateGUI()
+
+    def updateGUI(self):
+        self.setOverviewTaught()
 
     def support(self):
         pass

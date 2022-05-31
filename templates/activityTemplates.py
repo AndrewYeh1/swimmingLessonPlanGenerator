@@ -27,3 +27,21 @@ class Template:
 
     def validForLevel(self, level):
         return level in self.level
+
+    def toDict(self):
+        return {
+            "name": self.name,
+            "activity": self.activity,
+            "time": self.time,
+            "level": self.level,
+            "tp": self.tp,
+            "description": self.description
+        }
+
+    def importDict(self, activityDict):
+        self.name = activityDict["name"]
+        self.activity = activityDict["activity"]
+        self.time = activityDict["time"]
+        self.level = activityDict["level"]
+        self.tp = activityDict["tp"]
+        self.description = activityDict["description"]

@@ -1,3 +1,6 @@
+# import json
+import json
+
 # import templates
 from templates import activityTemplates
 
@@ -32,3 +35,29 @@ class LessonPlan:
                 if activity.name not in [i.name for i in activityList]:
                     activityList.append(activity)
         return activityList
+
+    def toJson(self):
+        jsonDayList = []
+        for i, day in enumerate(self.dayList):
+            jsonDayList.append([])
+            for activity in day:
+                jsonDayList[i].append(activity.toDict())
+        jsonDict = {
+            "wsi": self.wsi,
+            "course": self.course,
+            "location": self.location,
+            "dayList": jsonDayList
+        }
+        jsonString = json.dumps(jsonDict)
+        return jsonString
+
+    def importJson(self, jsonDict):
+        self.wsi = jsonDict["wsi"]
+        self.course = jsonDict["course"]
+        self.location = jsonDict["location"]
+        for i, day in enumerate(jsonDict["dayList"]):
+            self.dayList.append([])
+            for activityDict in day:
+                activity = activityTemplates.Template()
+                activity.importDict(activityDict)
+                self.dayList[i].append(activity)

@@ -64,6 +64,9 @@ class Preferences(QWidget):
         self.othersLevelComboBox.currentTextChanged.connect(levelChanged)
         self.otherVBox.addWidget(self.othersLevelComboBox)
 
+        # set window title
+        self.setWindowTitle("Save")
+
 
 def toggleIntroOnOff(state):
     config = presets.getConfig()
