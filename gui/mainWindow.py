@@ -216,7 +216,6 @@ class MainWindow(QWidget):
 
     def updateLessonPlan(self):
         self.saveDay()
-        self.reformat()
         self.setOverviewTaught()
 
     def setOverviewTaught(self):
@@ -316,13 +315,18 @@ class MainWindow(QWidget):
     def saveDay(self):
         li = []
         for i in range(self.lessonPlanVBox.count() - 1):
-            li.append(self.lessonPlanVBox.itemAt(i).widget())
-        self.lessonPlanList[self.dayNumInt] = li
+            li.append(self.lessonPlanVBox.itemAt(i).widget().getData())
+        self.lesson.dayList[self.dayNumInt] = li
 
     def loadDay(self, day):
-        if self.lessonPlanList.__contains__(day):
-            for i in self.lessonPlanList[day]:
-                self.lessonPlanVBox.insertWidget(self.lessonPlanVBox.count() - 1, i)
+        if self.lesson.dayList.__contains__(day):
+            for i in self.lesson.dayList[day]:
+                activityWidget = activityPanelGUI.ActivityPanel(
+                    i.level,
+                    self.updateLessonPlan,
+                    activity=i
+                )
+                self.lessonPlanVBox.insertWidget(self.lessonPlanVBox.count() - 1, activityWidget)
 
     def dayNumChanged(self, txt):
         if not txt == "":
@@ -365,7 +369,10 @@ class MainWindow(QWidget):
         self.updateGUI()
 
     def updateGUI(self):
+        # sets the overview
         self.setOverviewTaught()
+        # adds the activities to the boxes
+        self.loadDay(1)
 
     def support(self):
         pass
@@ -386,12 +393,3 @@ class MainWindow(QWidget):
 
     def docs(self):
         pass
-
-    def reformat(self):
-        lesson = lessonPlan.LessonPlan()
-        for key in self.lessonPlanList:
-            lesson.dayList.append([])
-            for activity in self.lessonPlanList[key]:
-                lesson.dayList[-1].append(activity.getData())
-        lesson = self.getHeader(lesson)
-        self.lesson = lesson

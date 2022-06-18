@@ -11,7 +11,7 @@ class LessonPlan:
         self.course = course
         self.location = location
         if dayList is None:
-            self.dayList = []
+            self.dayList = {}
         else:
             self.dayList = dayList
 
@@ -21,7 +21,7 @@ class LessonPlan:
     def getActivityAmt(self):
         activityDict = {}
         for day in self.dayList:
-            for activity in day:
+            for activity in self.dayList[day]:
                 if activity.activity not in activityDict:
                     activityDict[activity.activity] = 1
                 else:
@@ -37,16 +37,16 @@ class LessonPlan:
         return activityList
 
     def toJson(self):
-        jsonDayList = []
-        for i, day in enumerate(self.dayList):
-            jsonDayList.append([])
-            for activity in day:
-                jsonDayList[i].append(activity.toDict())
+        jsonDayDict = {}
+        for i in self.dayList.items():
+            jsonDayDict[i[0]] = []
+            for j in i[1]:
+                jsonDayDict[i[0]].append(j.toDict())
         jsonDict = {
             "wsi": self.wsi,
             "course": self.course,
             "location": self.location,
-            "dayList": jsonDayList
+            "dayList": jsonDayDict
         }
         jsonString = json.dumps(jsonDict)
         return jsonString
@@ -55,9 +55,9 @@ class LessonPlan:
         self.wsi = jsonDict["wsi"]
         self.course = jsonDict["course"]
         self.location = jsonDict["location"]
-        for i, day in enumerate(jsonDict["dayList"]):
-            self.dayList.append([])
-            for activityDict in day:
+        for i in jsonDict["dayList"].items():
+            self.dayList[int(i[0])] = []
+            for j in i[1]:
                 activity = activityTemplates.Template()
-                activity.importDict(activityDict)
-                self.dayList[i].append(activity)
+                activity.importDict(j)
+                self.dayList[int(i[0])].append(activity)

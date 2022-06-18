@@ -10,7 +10,8 @@ class Word:
         self.plan = plan
 
     def export(self):
-        for day in self.plan.dayList:
+        print(self.plan.dayList)
+        for day in self.plan.dayList.items():
             self.exportDay(day)
 
     def exportDay(self, day):
@@ -48,7 +49,7 @@ class Word:
         table.cell(2, 2).paragraphs[0].add_run("Formation").bold = True
         table.cell(2, 3).paragraphs[0].add_run("Equipment").bold = True
 
-        for i in day:
+        for i in day[1]:
             table = self.addActivity(table, i)
 
         # exports the word document
