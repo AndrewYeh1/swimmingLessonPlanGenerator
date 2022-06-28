@@ -1,8 +1,11 @@
 # GUI imports
 from PyQt6.QtWidgets import QFileDialog
 
-# import exporters
+# import templates
 from templates import lessonPlan
+
+# import save script
+from fileManager import save
 
 
 class SaveGUI(QFileDialog):
@@ -20,6 +23,4 @@ class SaveGUI(QFileDialog):
         fileTypes = "LP (*.lspn)"
         filePath = self.getSaveFileName(self, "Save Lesson Plan", "New Lesson Plan", fileTypes)
         if filePath[0] != '':
-            file = open(filePath[0], 'w')
-            file.write(self.lesson.toJson())
-            file.close()
+            save.save(self.lesson, filePath[0])

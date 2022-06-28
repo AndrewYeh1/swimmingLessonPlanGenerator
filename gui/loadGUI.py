@@ -29,6 +29,7 @@ from gui import preferencesPopup
 from templates import lessonPlan
 
 # import file managers
+from fileManager import load
 import json
 
 
@@ -41,9 +42,4 @@ class LoadGUI(QFileDialog):
         self.setNameFilter("*.lspn")
         filePath = self.getOpenFileName()
         if filePath[0] != '':
-            file = open(filePath[0], 'r')
-            fileDict = json.load(file)
-            file.close()
-            lesson = lessonPlan.LessonPlan()
-            lesson.importJson(fileDict)
-            return lesson
+            return load.load(filePath[0])

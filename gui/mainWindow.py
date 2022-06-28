@@ -7,6 +7,7 @@ from internalData import data
 
 # PyQt6 gui imports
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QCloseEvent
 from PyQt6.QtWidgets import (QWidget,  # window
                              QPushButton, QLabel,  # buttons and labels
                              QLineEdit,  # inputs
@@ -24,6 +25,7 @@ from gui import lessonPlanHeaderGUI
 # windows
 from gui import preferencesPopup
 from gui import saveGUI, loadGUI
+from gui import exportGUI
 
 # import exporters
 from templates import lessonPlan
@@ -71,8 +73,8 @@ class MainWindow(QWidget):
         self.settingsMenu = QMenu("Settings")
         self.fileMenu.addAction("Save", self.save)
         self.fileMenu.addAction("Load", self.load)
-        self.exportMenu.addAction("Export to word", self.word)
-        self.exportMenu.addAction("Export to google docs", self.docs)
+        self.exportMenu.addAction("Export to file", self.exportLocal)
+        self.exportMenu.addAction("Export to google docs", self.exportOnline)
         self.helpMenu.addAction("Support", self.support)
         self.helpMenu.addAction("Terms and conditions", self.terms)
         self.settingsMenu.addAction("Weighting", self.weighting)
@@ -99,6 +101,7 @@ class MainWindow(QWidget):
         self.levelOverviewTreeView = QTreeWidget()
         self.levelSelectAreaVbox.addWidget(self.levelOverviewTreeView)
         self.levelOverviewTreeView.setHeaderLabels(["Activity", "Taught"])
+        self.levelOverviewTreeView.setColumnWidth(0, 200)
         self.levelOverviewTreeView.itemClicked.connect(self.activitySelected)
 
         # sets up the ideas area
@@ -151,6 +154,11 @@ class MainWindow(QWidget):
         # adds the page controls under the scroll area
         self.lessonPlanList = {}
         self.lessonPlanControlsHBox = QHBoxLayout()
+        self.dateHBox = QHBoxLayout()
+        self.dayInput = QLineEdit()
+        self.monthInput = QLineEdit()
+        self.yearInput = QLineEdit()
+        self.changeDayHBox = QHBoxLayout()
         self.nextBtn = QPushButton("->")
         self.nextBtn.clicked.connect(self.next)
         self.previousBtn = QPushButton("<-")
@@ -162,19 +170,35 @@ class MainWindow(QWidget):
         self.daySlashLabel = QLabel("/")
         self.dayTotal = QLineEdit(str(self.dayTotalInt))
         self.dayTotal.textEdited.connect(self.dayTotalChanged)
+        self.timeTotalHBox = QHBoxLayout()
+        self.timeTotal = QLabel("0")
+        self.timeTotalMin = QLabel('min')
 
         # sets up the page controls
+        self.lessonPlanControlsHBox.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.lessonPlanControlsHBox.addLayout(self.dateHBox, 50)
+        self.lessonPlanControlsHBox.addLayout(self.changeDayHBox, 50)
+        self.lessonPlanControlsHBox.addLayout(self.timeTotalHBox, 50)
         self.dayNum.setMaximumWidth(20)
         self.daySlashLabel.setMaximumWidth(5)
         self.dayTotal.setMaximumWidth(20)
         self.nextBtn.setMaximumWidth(50)
         self.previousBtn.setMaximumWidth(50)
-        self.lessonPlanControlsHBox.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.lessonPlanControlsHBox.addWidget(self.previousBtn)
-        self.lessonPlanControlsHBox.addWidget(self.dayNum)
-        self.lessonPlanControlsHBox.addWidget(self.daySlashLabel)
-        self.lessonPlanControlsHBox.addWidget(self.dayTotal)
-        self.lessonPlanControlsHBox.addWidget(self.nextBtn)
+        self.dateHBox.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.dayInput.setMaximumWidth(20)
+        self.monthInput.setMaximumWidth(20)
+        self.yearInput.setMaximumWidth(20)
+        self.dateHBox.addWidget(self.dayInput)
+        self.dateHBox.addWidget(self.monthInput)
+        self.dateHBox.addWidget(self.yearInput)
+        self.changeDayHBox.addWidget(self.previousBtn)
+        self.changeDayHBox.addWidget(self.dayNum)
+        self.changeDayHBox.addWidget(self.daySlashLabel)
+        self.changeDayHBox.addWidget(self.dayTotal)
+        self.changeDayHBox.addWidget(self.nextBtn)
+        self.timeTotalHBox.setAlignment(Qt.AlignmentFlag.AlignRight)
+        self.timeTotalHBox.addWidget(self.timeTotal)
+        self.timeTotalHBox.addWidget(self.timeTotalMin)
         self.lessonPlanVBoxContainer.addLayout(self.lessonPlanControlsHBox)
 
         # populates the level overview with the default level
@@ -217,6 +241,11 @@ class MainWindow(QWidget):
     def updateLessonPlan(self):
         self.saveDay()
         self.setOverviewTaught()
+        self.setTotalTime()
+
+    def setTotalTime(self):
+        if self.dayNumInt in self.lesson.dayList:
+            self.timeTotal.setText(str(self.lesson.getTotalTime(self.dayNumInt)))
 
     def setOverviewTaught(self):
         # amount of times each skill is taught
@@ -290,22 +319,20 @@ class MainWindow(QWidget):
         if self.dayNumInt < self.dayTotalInt:
             # changes the day
             self.changeDay(self.dayNumInt + 1)
-            # changes day number
-            self.dayNumInt += 1
         self.dayNum.setText(str(self.dayNumInt))
 
     def previous(self):
         if self.dayNumInt > 1:
             # changes the day
             self.changeDay(self.dayNumInt - 1)
-            # changes day number
-            self.dayNumInt -= 1
         self.dayNum.setText(str(self.dayNumInt))
 
     def changeDay(self, day):
         self.saveDay()
         self.clearDay()
-        self.loadDay(day)
+        self.dayNumInt = day
+        self.loadDay()
+        self.setTotalTime()
 
     def clearDay(self):
         for i in reversed(range(self.lessonPlanVBox.count() - 1)):
@@ -317,10 +344,11 @@ class MainWindow(QWidget):
         for i in range(self.lessonPlanVBox.count() - 1):
             li.append(self.lessonPlanVBox.itemAt(i).widget().getData())
         self.lesson.dayList[self.dayNumInt] = li
+        self.lesson = self.getHeader(self.lesson)
 
-    def loadDay(self, day):
-        if self.lesson.dayList.__contains__(day):
-            for i in self.lesson.dayList[day]:
+    def loadDay(self):
+        if self.dayNumInt in self.lesson.dayList:
+            for i in self.lesson.dayList[self.dayNumInt]:
                 activityWidget = activityPanelGUI.ActivityPanel(
                     i.level,
                     self.updateLessonPlan,
@@ -332,10 +360,10 @@ class MainWindow(QWidget):
         if not txt == "":
             if int(txt) > self.dayTotalInt:
                 # sets the day number
-                self.dayNumInt = self.dayTotalInt
+                self.changeDay(self.dayTotalInt)
             else:
                 # sets the day number
-                self.dayNumInt = int(txt)
+                self.changeDay(int(txt))
             self.dayNum.setText(str(self.dayNumInt))
 
     def dayTotalChanged(self, txt):
@@ -372,7 +400,7 @@ class MainWindow(QWidget):
         # sets the overview
         self.setOverviewTaught()
         # adds the activities to the boxes
-        self.loadDay(1)
+        self.loadDay()
 
     def support(self):
         pass
@@ -386,10 +414,14 @@ class MainWindow(QWidget):
     def preferences(self):
         self.preferencesWindow.show()
 
-    def word(self):
+    def exportLocal(self):
         self.saveDay()
-        wordExporter = exporters.word.Word(self.lesson)
-        wordExporter.export()
+        exporter = exportGUI.ExportGUI()
+        exporter.giveLesson(self.lesson)
+        exporter.export()
 
-    def docs(self):
+    def exportOnline(self):
+        self.saveDay()
+
+    def closeEvent(self, a0: QCloseEvent) -> None:
         pass

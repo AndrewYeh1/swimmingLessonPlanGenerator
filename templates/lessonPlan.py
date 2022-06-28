@@ -15,8 +15,11 @@ class LessonPlan:
         else:
             self.dayList = dayList
 
-    def getPreview(self):
-        pass
+    def getTotalTime(self, day):
+        totalTime = 0
+        for activity in self.dayList[day]:
+            totalTime += activity.time
+        return totalTime
 
     def getActivityAmt(self):
         activityDict = {}

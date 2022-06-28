@@ -2,7 +2,7 @@ from internalData import constant
 
 
 class Template:
-    def __init__(self, name="", activity=None, time=0, level=None, tp=1, description=None):
+    def __init__(self, name="", activity=None, time=0, level=None, tp=1, description=None, formation=None, equipment=None):
         self.name = name
         self.activity = activity
         self.time = time
@@ -15,6 +15,8 @@ class Template:
             self.description = []
         else:
             self.description = description
+        self.formation = formation
+        self.equipment = equipment
 
     def getSteps(self):
         return self.description
