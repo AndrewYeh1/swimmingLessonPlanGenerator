@@ -158,6 +158,9 @@ class MainWindow(QWidget):
         self.dayInput = QLineEdit()
         self.monthInput = QLineEdit()
         self.yearInput = QLineEdit()
+        self.dayInput.textEdited.connect(self.changeDate)
+        self.monthInput.textEdited.connect(self.changeDate)
+        self.yearInput.textEdited.connect(self.changeDate)
         self.changeDayHBox = QHBoxLayout()
         self.nextBtn = QPushButton("->")
         self.nextBtn.clicked.connect(self.next)
@@ -333,11 +336,13 @@ class MainWindow(QWidget):
         self.dayNumInt = day
         self.loadDay()
         self.setTotalTime()
+        self.setDate()
 
     def clearDay(self):
         for i in reversed(range(self.lessonPlanVBox.count() - 1)):
             # noinspection PyTypeChecker
             self.lessonPlanVBox.itemAt(i).widget().setParent(None)
+        self.clearDate()
 
     def saveDay(self):
         li = []
@@ -387,6 +392,20 @@ class MainWindow(QWidget):
         lesson.course = self.header.courseInput.text()
         lesson.location = self.header.locationInput.text()
         return lesson
+
+    def changeDate(self):
+        self.lesson.dateList[self.dayNumInt] = [self.dayInput.text(), self.monthInput.text(), self.yearInput.text()]
+
+    def setDate(self):
+        if self.dayNumInt in self.lesson.dateList:
+            self.dayInput.setText(self.lesson.dateList[self.dayNumInt][0])
+            self.monthInput.setText(self.lesson.dateList[self.dayNumInt][1])
+            self.yearInput.setText(self.lesson.dateList[self.dayNumInt][2])
+
+    def clearDate(self):
+        self.dayInput.setText("")
+        self.monthInput.setText("")
+        self.yearInput.setText("")
 
     def save(self):
         self.saveWindow.giveLesson(self.lesson)

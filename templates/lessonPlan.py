@@ -6,7 +6,7 @@ from templates import activityTemplates
 
 
 class LessonPlan:
-    def __init__(self, dayList=None, wsi="", course="", location=""):
+    def __init__(self, dayList=None, wsi="", course="", location="", dateList=None):
         self.wsi = wsi
         self.course = course
         self.location = location
@@ -14,6 +14,10 @@ class LessonPlan:
             self.dayList = {}
         else:
             self.dayList = dayList
+        if dateList is None:
+            self.dateList = {}
+        else:
+            self.dateList = dateList
 
     def getTotalTime(self, day):
         totalTime = 0
